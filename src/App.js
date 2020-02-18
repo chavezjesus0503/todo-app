@@ -1,6 +1,8 @@
 import React from "react";
 import "./App.css";
 
+import ListFooter from "./components/ListFooter.component";
+
 var enterKey = 13;
 
 class App extends React.Component {
@@ -14,30 +16,21 @@ class App extends React.Component {
       complete: false,
       all: true
     };
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleActive = this.handleActive.bind(this);
-    this.handleAll = this.handleAll.bind(this);
-    this.handleComplete = this.handleComplete.bind(this);
-    this.clearComplete = this.clearComplete.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.selectAll = this.selectAll.bind(this);
-    this.destroy = this.destroy.bind(this);
   }
 
-  handleKeyDown(event) {
+  handleKeyDown = event => {
     if (event.keyCode === enterKey) {
       this.handleSubmit(event);
     }
-  }
+  };
 
-  handleChange(event) {
+  handleChange = event => {
     this.setState({
       value: event.target.value
     });
-  }
+  };
 
-  handleSubmit(event) {
+  handleSubmit = event => {
     event.preventDefault();
     var todos = this.state.todos;
     todos.push({ text: this.refs.newText.value, completed: false });
@@ -46,9 +39,9 @@ class App extends React.Component {
       value: "",
       todoCount: this.state.todoCount + 1
     });
-  }
+  };
 
-  handleClick(text) {
+  handleClick = text => {
     this.setState(prevState => {
       const updatedTodos = prevState.todos.map(todo => {
         if (todo.text === text) {
@@ -61,9 +54,9 @@ class App extends React.Component {
       };
     });
     this.changeAll();
-  }
+  };
 
-  changeAll() {
+  changeAll = () => {
     if (this.state.all) {
       this.setState({
         all: false
@@ -73,30 +66,30 @@ class App extends React.Component {
         all: true
       });
     }
-  }
+  };
 
-  handleActive() {
+  handleActive = () => {
     this.setState({
       active: true,
       complete: false
     });
-  }
+  };
 
-  handleAll() {
+  handleAll = () => {
     this.setState({
       complete: false,
       active: false
     });
-  }
+  };
 
-  handleComplete() {
+  handleComplete = () => {
     this.setState({
       complete: true,
       active: false
     });
-  }
+  };
 
-  clearComplete() {
+  clearComplete = () => {
     let clearData = this.state.todos.filter(todo => {
       return todo.completed === false;
     });
@@ -104,9 +97,9 @@ class App extends React.Component {
       todos: clearData,
       all: true
     });
-  }
+  };
 
-  selectAll() {
+  selectAll = () => {
     if (this.state.all) {
       this.setState(prevState => {
         const selectData = prevState.todos.map(todo => {
@@ -132,13 +125,12 @@ class App extends React.Component {
         };
       });
     }
-  }
+  };
 
-  destroy(todo) {
+  destroy = todo => {
     var destroy = this.state.todos.filter(candidate => {
       return candidate !== todo;
     });
-    console.log(destroy);
 
     setTimeout(
       () =>
@@ -147,7 +139,7 @@ class App extends React.Component {
         }),
       1
     );
-  }
+  };
 
   render() {
     const completedStyle = {
@@ -158,9 +150,9 @@ class App extends React.Component {
     const activeItemsData = this.state.todos.filter(todo => {
       return todo.completed === false;
     });
-    const activeItems = activeItemsData.map(todo => {
+    const activeItems = activeItemsData.map((todo, index) => {
       return (
-        <div className="container">
+        <div className="container" key={index}>
           <label className="checkbox-container">
             <p
               style={todo.completed ? completedStyle : null}
@@ -189,9 +181,9 @@ class App extends React.Component {
     const completeItemsData = this.state.todos.filter(todo => {
       return todo.completed === true;
     });
-    const completeItems = completeItemsData.map(todo => {
+    const completeItems = completeItemsData.map((todo, index) => {
       return (
-        <div className="container">
+        <div className="container" key={index}>
           <label className="checkbox-container">
             <p
               style={todo.completed ? completedStyle : null}
@@ -217,8 +209,8 @@ class App extends React.Component {
       );
     });
 
-    const todoItems = this.state.todos.map(todo => (
-      <div className="container">
+    const todoItems = this.state.todos.map((todo, index) => (
+      <div className="container" key={index}>
         <label className="checkbox-container">
           <p
             style={todo.completed ? completedStyle : null}
@@ -258,12 +250,15 @@ class App extends React.Component {
             onKeyDown={this.handleKeyDown}
           />
           {this.state.todos.length ? (
-            <input
-              type="checkbox"
-              onChange={this.selectAll}
-              className="select-all"
-              checked={activeItemsData.length === 0}
-            />
+            <label className="arrow-container">
+              <input
+                type="checkbox"
+                onChange={this.selectAll}
+                className="select-all"
+                checked={activeItemsData.length === 0}
+              />
+              <span className="arrow-checkmark"></span>
+            </label>
           ) : null}
         </div>
         {this.state.active
@@ -281,48 +276,6 @@ class App extends React.Component {
             handleClear={this.clearComplete}
           />
         ) : null}
-      </div>
-    );
-  }
-}
-
-class ListFooter extends React.Component {
-  render() {
-    var clearButton = null;
-    if (this.props.completedNumber > 0) {
-      clearButton = (
-        <button className="clear-completed" onClick={this.props.handleClear}>
-          Clear Completed
-        </button>
-      );
-    }
-
-    var itemsLeft;
-    if (this.props.activeNumber !== 1) {
-      itemsLeft = (
-        <p id="todo-number-display">{this.props.activeNumber} items left</p>
-      );
-    } else {
-      itemsLeft = (
-        <p id="todo-number-display">{this.props.activeNumber} item left</p>
-      );
-    }
-
-    return (
-      <div className="list-footer">
-        {itemsLeft}
-        <div className="toggleButtons">
-          <a href="#" onClick={this.props.handleAll}>
-            All
-          </a>
-          <a href="#" onClick={this.props.handleClick}>
-            Active
-          </a>
-          <a href="#" onClick={this.props.handleComplete}>
-            Completed
-          </a>
-        </div>
-        {clearButton}
       </div>
     );
   }
