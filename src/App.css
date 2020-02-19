@@ -112,11 +112,11 @@ input[type="checkbox"]:checked {
   transform: rotate(45deg);
 }
 
-.destroyBtn {
+.deleteBtn {
   display: none;
   align-self: center;
 }
-.container:hover .destroyBtn {
+.container:hover .deleteBtn {
   display: inline-block;
   border: none;
   background: none;
@@ -245,7 +245,7 @@ input[type="checkbox"]:checked {
     width: 90vw;
   }
 
-  .container:hover .destroyBtn {
+  .container:hover .deleteBtn {
     position: absolute;
     left: 560px;
   }

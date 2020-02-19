@@ -1,16 +1,17 @@
 import React from "react";
 import "./App.css";
+import Todo from "./components/Todo.component";
 
 import ListFooter from "./components/ListFooter.component";
-
-var enterKey = 13;
+import TodoFrom from "./components/TodoForm";
+import TodoForm from "./components/TodoForm";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       todos: [],
-      value: "",
+      todo: "",
       todoCount: 0,
       active: false,
       complete: false,
@@ -19,25 +20,73 @@ class App extends React.Component {
   }
 
   handleKeyDown = event => {
+    const enterKey = 13;
     if (event.keyCode === enterKey) {
       this.handleSubmit(event);
     }
   };
 
-  handleChange = event => {
+  handleSubmit = event => {
+    event.preventDefault();
+    const { todos, todo, todoCount } = this.state;
+    todos.push({ text: todo, completed: false });
     this.setState({
-      value: event.target.value
+      todos,
+      todo: "",
+      todoCount: todoCount + 1
     });
   };
 
-  handleSubmit = event => {
-    event.preventDefault();
-    var todos = this.state.todos;
-    todos.push({ text: this.refs.newText.value, completed: false });
+  handleChange = event => {
     this.setState({
-      todos: todos,
-      value: "",
-      todoCount: this.state.todoCount + 1
+      todo: event.target.value
+    });
+  };
+
+  todosList = () => {
+    return this.state.todos.map((currenttodo, index) => {
+      return (
+        <Todo
+          todo={currenttodo}
+          key={index}
+          delete={this.delete}
+          handleClick={this.handleClick}
+        />
+      );
+    });
+  };
+
+  completeTodosList = () => {
+    const completedTodos = this.state.todos.filter(todo => {
+      return todo.completed === true;
+    });
+
+    return completedTodos.map((todo, index) => {
+      return (
+        <Todo
+          todo={todo}
+          key={index}
+          delete={this.delete}
+          handleClick={this.handleClick}
+        />
+      );
+    });
+  };
+
+  activeTodosList = () => {
+    const activeTodos = this.state.todos.filter(todo => {
+      return todo.completed === false;
+    });
+
+    return activeTodos.map((todo, index) => {
+      return (
+        <Todo
+          todo={todo}
+          key={index}
+          delete={this.delete}
+          handleClick={this.handleClick}
+        />
+      );
     });
   };
 
@@ -127,150 +176,41 @@ class App extends React.Component {
     }
   };
 
-  destroy = todo => {
-    var destroy = this.state.todos.filter(candidate => {
+  delete = todo => {
+    var deletedList = this.state.todos.filter(candidate => {
       return candidate !== todo;
     });
 
     setTimeout(
       () =>
         this.setState({
-          todos: destroy
+          todos: deletedList
         }),
       1
     );
   };
 
   render() {
-    const completedStyle = {
-      color: "#cdcdcd",
-      textDecoration: "line-through"
-    };
-
-    const activeItemsData = this.state.todos.filter(todo => {
-      return todo.completed === false;
-    });
-    const activeItems = activeItemsData.map((todo, index) => {
-      return (
-        <div className="container" key={index}>
-          <label className="checkbox-container">
-            <p
-              style={todo.completed ? completedStyle : null}
-              className="todo-title"
-            >
-              {todo.text}
-            </p>
-            <input
-              type="checkbox"
-              onChange={() => this.handleClick(todo.text)}
-              checked={todo.completed}
-              className="newCheckbox"
-            />
-            <span className="checkmark" />
-            <button
-              className="destroyBtn"
-              onClick={this.destroy.bind(this, todo)}
-            >
-              X
-            </button>
-          </label>
-        </div>
-      );
-    });
-
-    const completeItemsData = this.state.todos.filter(todo => {
-      return todo.completed === true;
-    });
-    const completeItems = completeItemsData.map((todo, index) => {
-      return (
-        <div className="container" key={index}>
-          <label className="checkbox-container">
-            <p
-              style={todo.completed ? completedStyle : null}
-              className="todo-title"
-            >
-              {todo.text}
-            </p>
-            <input
-              type="checkbox"
-              onChange={() => this.handleClick(todo.text)}
-              checked={todo.completed}
-              className="newCheckbox"
-            />
-            <span className="checkmark" />
-            <button
-              className="destroyBtn"
-              onClick={this.destroy.bind(this, todo)}
-            >
-              X
-            </button>
-          </label>
-        </div>
-      );
-    });
-
-    const todoItems = this.state.todos.map((todo, index) => (
-      <div className="container" key={index}>
-        <label className="checkbox-container">
-          <p
-            style={todo.completed ? completedStyle : null}
-            className="todo-title"
-          >
-            {todo.text}
-          </p>
-          <input
-            type="checkbox"
-            onChange={() => this.handleClick(todo.text)}
-            checked={todo.completed}
-            className="newCheckbox"
-          />
-          <span className="checkmark" />
-          <button
-            className="destroyBtn"
-            onClick={this.destroy.bind(this, todo)}
-          >
-            X
-          </button>
-        </label>
-      </div>
-    ));
-
     return (
       <div className="list">
-        <h1 className="title">to-do</h1>
-
-        <div className="todo-form">
-          <input
-            id="todo-input"
-            type="text"
-            ref="newText"
-            placeholder="What needs to be done?"
-            onChange={this.handleChange}
-            value={this.state.value}
-            onKeyDown={this.handleKeyDown}
-          />
-          {this.state.todos.length ? (
-            <label className="arrow-container">
-              <input
-                type="checkbox"
-                onChange={this.selectAll}
-                className="select-all"
-                checked={activeItemsData.length === 0}
-              />
-              <span className="arrow-checkmark"></span>
-            </label>
-          ) : null}
-        </div>
+        <TodoForm
+          handleChange={this.handleChange}
+          todo={this.state.todo}
+          handleKeyDown={this.handleKeyDown}
+          selectAll={this.selectAll}
+          activeTodosList={this.activeTodosList}
+          todos={this.state.todos}
+        />
         {this.state.active
-          ? activeItems
+          ? this.activeTodosList()
           : this.state.complete
-          ? completeItems
-          : todoItems}
+          ? this.completeTodosList()
+          : this.todosList()}
         {this.state.todos.length > 0 ? (
           <ListFooter
-            activeNumber={activeItemsData.length}
-            completedNumber={completeItemsData.length}
-            handleClick={this.handleActive}
+            activeNumber={this.activeTodosList().length}
+            completedNumber={this.completeTodosList().length}
+            handleActive={this.handleActive}
             handleAll={this.handleAll}
             handleComplete={this.handleComplete}
             handleClear={this.clearComplete}

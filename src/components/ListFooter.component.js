@@ -29,7 +29,7 @@ export default class ListFooter extends React.Component {
           <a href="#/all" onClick={this.props.handleAll}>
             All
           </a>
-          <a href="#/active" onClick={this.props.handleClick}>
+          <a href="#/active" onClick={this.props.handleActive}>
             Active
           </a>
           <a href="#/completed" onClick={this.props.handleComplete}>
