@@ -1,9 +1,8 @@
 import React from "react";
 import "./App.css";
-import Todo from "./components/Todo.component";
 
+import Todo from "./components/Todo.component";
 import ListFooter from "./components/ListFooter.component";
-import TodoFrom from "./components/TodoForm";
 import TodoForm from "./components/TodoForm";
 
 class App extends React.Component {
@@ -13,10 +12,21 @@ class App extends React.Component {
       todos: [],
       todo: "",
       todoCount: 0,
-      active: false,
-      complete: false,
-      all: true
+      showActive: false,
+      showComplete: false,
+      showAll: true
     };
+  }
+
+  componentDidMount() {
+    const todos = localStorage.getItem("todos");
+    if (todos) {
+      const next = JSON.parse(todos);
+
+      this.setState({
+        todos: next
+      });
+    }
   }
 
   handleKeyDown = event => {
@@ -30,6 +40,7 @@ class App extends React.Component {
     event.preventDefault();
     const { todos, todo, todoCount } = this.state;
     todos.push({ text: todo, completed: false });
+    localStorage.setItem("todos", JSON.stringify(todos));
     this.setState({
       todos,
       todo: "",
@@ -102,39 +113,34 @@ class App extends React.Component {
         todos: updatedTodos
       };
     });
+
     this.changeAll();
   };
 
   changeAll = () => {
-    if (this.state.all) {
-      this.setState({
-        all: false
-      });
-    } else {
-      this.setState({
-        all: true
-      });
-    }
+    this.setState({
+      showAll: !this.state.showAll
+    });
   };
 
   handleActive = () => {
     this.setState({
-      active: true,
-      complete: false
+      showActive: true,
+      showComplete: false
     });
   };
 
   handleAll = () => {
     this.setState({
-      complete: false,
-      active: false
+      showComplete: false,
+      showActive: false
     });
   };
 
   handleComplete = () => {
     this.setState({
-      complete: true,
-      active: false
+      showComplete: true,
+      showActive: false
     });
   };
 
@@ -142,14 +148,15 @@ class App extends React.Component {
     let clearData = this.state.todos.filter(todo => {
       return todo.completed === false;
     });
+    localStorage.setItem("todos", JSON.stringify(clearData));
     this.setState({
       todos: clearData,
-      all: true
+      showAll: true
     });
   };
 
   selectAll = () => {
-    if (this.state.all) {
+    if (this.state.showAll) {
       this.setState(prevState => {
         const selectData = prevState.todos.map(todo => {
           todo.completed = true;
@@ -158,7 +165,7 @@ class App extends React.Component {
         });
         return {
           todos: selectData,
-          all: false
+          showAll: false
         };
       });
     } else {
@@ -170,7 +177,7 @@ class App extends React.Component {
         });
         return {
           todos: selectData,
-          all: true
+          showAll: true
         };
       });
     }
@@ -180,6 +187,8 @@ class App extends React.Component {
     var deletedList = this.state.todos.filter(candidate => {
       return candidate !== todo;
     });
+
+    localStorage.setItem("todos", JSON.stringify(deletedList));
 
     setTimeout(
       () =>
@@ -201,9 +210,9 @@ class App extends React.Component {
           activeTodosList={this.activeTodosList}
           todos={this.state.todos}
         />
-        {this.state.active
+        {this.state.showActive
           ? this.activeTodosList()
-          : this.state.complete
+          : this.state.showComplete
           ? this.completeTodosList()
           : this.todosList()}
         {this.state.todos.length > 0 ? (
