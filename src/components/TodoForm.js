@@ -1,4 +1,6 @@
 import React, { Fragment } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
 const TodoForm = props => {
   return (
@@ -30,4 +32,12 @@ const TodoForm = props => {
   );
 };
 
-export default TodoForm;
+TodoForm.propTypes = {
+  todos: PropTypes.array.isRequired
+};
+
+const mapStateToProps = state => ({
+  todos: state.todo.todos
+});
+
+export default connect(mapStateToProps, {})(TodoForm);

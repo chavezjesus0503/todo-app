@@ -1,6 +1,6 @@
 import React from "react";
 
-export default class ListFooter extends React.Component {
+class ListFooter extends React.Component {
   render() {
     var clearButton = null;
     if (this.props.completedNumber > 0) {
@@ -41,3 +41,5 @@ export default class ListFooter extends React.Component {
     );
   }
 }
+
+export default ListFooter;
