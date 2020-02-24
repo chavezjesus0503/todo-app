@@ -46,7 +46,6 @@ class App extends React.Component {
     }
   };
 
-  // add todo
   handleSubmit = event => {
     event.preventDefault();
 
@@ -118,9 +117,6 @@ class App extends React.Component {
   };
 
   handleClick = text => {
-    // this.props.clickBox(text)
-    // passed text of todo that's been clicked on
-
     const updatedTodos = this.props.todos.map(todo => {
       if (todo.text === text) {
         todo.completed = !todo.completed;
@@ -197,7 +193,6 @@ class App extends React.Component {
     }
   };
 
-  // delete item
   delete = todo => {
     var deletedList = this.props.todos.filter(candidate => {
       return candidate !== todo;

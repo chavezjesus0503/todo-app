@@ -23,13 +23,6 @@ export const addTodo = todos => dispatch => {
 };
 
 export const deleteTodo = todos => dispatch => {
-  //  setTimeout(
-  // () =>
-  // this.setState({
-  // todos: deletedList
-  //   }),
-  // 1
-  // );
   dispatch({
     type: DELETE_TODO,
     payload: todos
