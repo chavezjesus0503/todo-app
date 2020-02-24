@@ -34,10 +34,10 @@ input[placeholder]::-webkit-input-placeholder {
   font-size: 20px;
   padding-left: 50px;
   box-shadow: 0px 0px 1px 1px lightgrey;
+  position: relative;
   border: 0;
   font: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 300;
-  position: relative;
 }
 #todo-input:focus {
   outline: none;
@@ -51,22 +51,19 @@ input[type="checkbox"]:checked {
   border: 1px solid green;
 }
 .container {
+  width: 40vw;
+  height: 60px;
+  font-size: 20px;
+  padding-left: 50px;
+  box-shadow: 0px 0px 1px 1px lightgrey;
+  position: relative;
   display: flex;
   align-items: center;
   flex-direction: row;
-  position: relative;
-  padding-left: 50px;
+  border: 0;
   cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  width: 40vw;
-  height: 60px;
   margin: auto;
   background-color: white;
-  font-size: 20px;
-  box-shadow: 0px 0px 1px 1px lightgrey;
 }
 
 /* Hide the browser's default checkbox */
