@@ -1,12 +1,12 @@
-import React from "react";
-import "./App.css";
+import React, { useState, useEffect } from 'react';
+import './App.css';
 
-import Todo from "./components/Todo.component";
-import ListFooter from "./components/ListFooter.component";
-import TodoForm from "./components/TodoForm";
-import PropTypes from "prop-types";
+import Todo from './components/Todo';
+import ListFooter from './components/ListFooter';
+import TodoForm from './components/TodoForm';
+import PropTypes from 'prop-types';
 
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 import {
   addTodo,
   getTodos,
@@ -14,76 +14,69 @@ import {
   clearComplete,
   clickBox,
   checkAll,
-  uncheckAll
-} from "./actions/todoActions";
+  uncheckAll,
+} from './actions/todoActions';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      todos: [],
-      todo: "",
-      todoCount: 0,
-      showActive: false,
-      showComplete: false,
-      showAll: true
-    };
-  }
+const App = ({
+  getTodos,
+  todos,
+  addTodo,
+  clickBox,
+  clearComplete,
+  uncheckAll,
+  deleteTodo,
+}) => {
+  const [todo, setTodo] = useState('');
+  const [todoCount, setTodoCount] = useState(0);
+  const [showActive, setShowActive] = useState(false);
+  const [showComplete, setShowComplete] = useState(false);
+  const [showAll, setShowAll] = useState(true);
 
-  componentDidMount() {
-    const todos = localStorage.getItem("todos");
+  useEffect(() => {
+    const todos = localStorage.getItem('todos');
     if (todos) {
       const loadTodos = JSON.parse(todos);
 
-      this.props.getTodos(loadTodos);
+      getTodos(loadTodos);
     }
-  }
+  }, []);
 
-  handleKeyDown = event => {
+  const handleKeyDown = (event) => {
     const enterKey = 13;
     if (event.keyCode === enterKey) {
-      this.handleSubmit(event);
+      handleSubmit(event);
     }
   };
 
-  handleSubmit = event => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
-    const { todo, todoCount } = this.state;
-    const { todos } = this.props;
-
     todos.push({ text: todo, completed: false });
-    localStorage.setItem("todos", JSON.stringify(todos));
+    localStorage.setItem('todos', JSON.stringify(todos));
 
-    this.props.addTodo(todos);
+    addTodo(todos);
 
-    this.setState({
-      todo: "",
-      todoCount: todoCount + 1
-    });
+    setTodo('');
+    setTodoCount(todoCount + 1);
   };
 
-  handleChange = event => {
-    this.setState({
-      todo: event.target.value
-    });
-  };
+  const handleChange = (e) => setTodo(e.target.value);
 
-  todosList = () => {
-    return this.props.todos.map((currenttodo, index) => {
+  const todosList = () => {
+    return todos.map((currenttodo, index) => {
       return (
         <Todo
           todo={currenttodo}
           key={index}
-          delete={this.delete}
-          handleClick={this.handleClick}
+          destroy={destroy}
+          handleClick={handleClick}
         />
       );
     });
   };
 
-  completeTodosList = () => {
-    const completedTodos = this.props.todos.filter(todo => {
+  const completeTodosList = () => {
+    const completedTodos = todos.filter((todo) => {
       return todo.completed === true;
     });
 
@@ -92,15 +85,15 @@ class App extends React.Component {
         <Todo
           todo={todo}
           key={index}
-          delete={this.delete}
-          handleClick={this.handleClick}
+          destroy={destroy}
+          handleClick={handleClick}
         />
       );
     });
   };
 
-  activeTodosList = () => {
-    const activeTodos = this.props.todos.filter(todo => {
+  const activeTodosList = () => {
+    const activeTodos = todos.filter((todo) => {
       return todo.completed === false;
     });
 
@@ -109,137 +102,121 @@ class App extends React.Component {
         <Todo
           todo={todo}
           key={index}
-          delete={this.delete}
-          handleClick={this.handleClick}
+          destroy={destroy}
+          handleClick={handleClick}
         />
       );
     });
   };
 
-  handleClick = text => {
-    const updatedTodos = this.props.todos.map(todo => {
+  const handleClick = (text) => {
+    const updatedTodos = todos.map((todo) => {
       if (todo.text === text) {
         todo.completed = !todo.completed;
       }
       return todo;
     });
 
-    this.props.clickBox(updatedTodos);
+    clickBox(updatedTodos);
 
-    this.changeAll();
+    changeAll();
   };
 
-  changeAll = () => {
-    this.setState({
-      showAll: !this.state.showAll
-    });
+  const changeAll = () => {
+    setShowAll(!showAll);
   };
 
-  handleActive = () => {
-    this.setState({
-      showActive: true,
-      showComplete: false
-    });
+  const handleActive = () => {
+    setShowActive(true);
+    setShowComplete(false);
   };
 
-  handleAll = () => {
-    this.setState({
-      showComplete: false,
-      showActive: false
-    });
+  const handleAll = () => {
+    setShowComplete(false);
+    setShowActive(false);
   };
 
-  handleComplete = () => {
-    this.setState({
-      showComplete: true,
-      showActive: false
-    });
+  const handleComplete = () => {
+    setShowComplete(true);
+    setShowActive(false);
   };
 
-  clearComplete = () => {
-    let clearData = this.props.todos.filter(todo => {
+  const clearCompleteTodos = () => {
+    let clearData = todos.filter((todo) => {
       return todo.completed === false;
     });
-    localStorage.setItem("todos", JSON.stringify(clearData));
+    localStorage.setItem('todos', JSON.stringify(clearData));
 
-    this.setState({
-      showAll: true
-    });
+    setShowAll(true);
 
-    this.props.clearComplete(clearData);
+    clearComplete(clearData);
   };
 
-  selectAll = () => {
-    if (this.state.showAll) {
-      const selectData = this.props.todos.map(todo => {
+  const selectAll = () => {
+    if (showAll) {
+      const selectData = todos.map((todo) => {
         todo.completed = true;
 
         return todo;
       });
-      this.setState({
-        showAll: false
-      });
-      this.props.checkAll(selectData);
+      setShowAll(false);
+      checkAll(selectData);
     } else {
-      const selectData = this.props.todos.map(todo => {
+      const selectData = todos.map((todo) => {
         todo.completed = false;
 
         return todo;
       });
-      this.setState({
-        showAll: true
-      });
-      this.props.uncheckAll(selectData);
+      setShowAll(true);
+      uncheckAll(selectData);
     }
   };
 
-  delete = todo => {
-    var deletedList = this.props.todos.filter(candidate => {
+  const destroy = (todo) => {
+    var deletedList = todos.filter((candidate) => {
       return candidate !== todo;
     });
 
-    localStorage.setItem("todos", JSON.stringify(deletedList));
+    localStorage.setItem('todos', JSON.stringify(deletedList));
 
-    this.props.deleteTodo(deletedList);
+    deleteTodo(deletedList);
   };
 
-  render() {
-    return (
-      <div className="list">
-        <TodoForm
-          handleChange={this.handleChange}
-          todo={this.state.todo}
-          handleKeyDown={this.handleKeyDown}
-          selectAll={this.selectAll}
-          activeTodosList={this.activeTodosList}
-          todos={this.state.todos}
+  return (
+    <div className="list">
+      <TodoForm
+        handleChange={handleChange}
+        todo={todo}
+        handleKeyDown={handleKeyDown}
+        selectAll={selectAll}
+        activeTodosList={activeTodosList}
+        todos={todos}
+      />
+      {showActive
+        ? activeTodosList()
+        : showComplete
+        ? completeTodosList()
+        : todosList()}
+      {todos.length > 0 && (
+        <ListFooter
+          activeNumber={activeTodosList().length}
+          completedNumber={completeTodosList().length}
+          handleActive={handleActive}
+          handleAll={handleAll}
+          handleComplete={handleComplete}
+          handleClear={clearCompleteTodos}
         />
-        {this.state.showActive
-          ? this.activeTodosList()
-          : this.state.showComplete
-          ? this.completeTodosList()
-          : this.todosList()}
-        {this.props.todos.length > 0 ? (
-          <ListFooter
-            activeNumber={this.activeTodosList().length}
-            completedNumber={this.completeTodosList().length}
-            handleActive={this.handleActive}
-            handleAll={this.handleAll}
-            handleComplete={this.handleComplete}
-            handleClear={this.clearComplete}
-          />
-        ) : null}
-      </div>
-    );
-  }
-}
-
-App.propTypes = {
-  todos: PropTypes.array.isRequired
+      )}
+    </div>
+  );
 };
 
-const mapStateToProps = state => ({
-  todos: state.todo.todos
+App.propTypes = {
+  todos: PropTypes.array.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  todos: state.todo.todos,
 });
 
 export default connect(mapStateToProps, {
@@ -249,5 +226,5 @@ export default connect(mapStateToProps, {
   clearComplete,
   clickBox,
   checkAll,
-  uncheckAll
+  uncheckAll,
 })(App);

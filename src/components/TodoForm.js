@@ -1,8 +1,15 @@
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-const TodoForm = props => {
+const TodoForm = ({
+  handleChange,
+  handleKeyDown,
+  activeTodosList,
+  todos,
+  todo,
+  selectAll,
+}) => {
   return (
     <Fragment>
       <h1 className="title">to-do</h1>
@@ -12,32 +19,32 @@ const TodoForm = props => {
           id="todo-input"
           type="text"
           placeholder="What needs to be done?"
-          onChange={props.handleChange}
-          value={props.todo}
-          onKeyDown={props.handleKeyDown}
+          onChange={handleChange}
+          value={todo}
+          onKeyDown={handleKeyDown}
         />
-        {props.todos.length ? (
+        {todos[0] && (
           <label className="arrow-container">
             <input
               type="checkbox"
-              onChange={props.selectAll}
+              onChange={selectAll}
               className="select-all"
-              checked={props.activeTodosList().length === 0}
+              checked={activeTodosList().length === 0}
             />
             <span className="arrow-checkmark"></span>
           </label>
-        ) : null}
+        )}
       </div>
     </Fragment>
   );
 };
 
 TodoForm.propTypes = {
-  todos: PropTypes.array.isRequired
+  todos: PropTypes.array.isRequired,
 };
 
-const mapStateToProps = state => ({
-  todos: state.todo.todos
+const mapStateToProps = (state) => ({
+  todos: state.todo.todos,
 });
 
 export default connect(mapStateToProps, {})(TodoForm);
