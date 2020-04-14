@@ -8,7 +8,7 @@ body {
   font-weight: 300;
 }
 .title {
-  color: hsl(350, 100%, 92%);
+  color: #3b5998;
   font-size: 80px;
   font-weight: 200;
 }
@@ -144,14 +144,12 @@ input[type="checkbox"]:checked {
 }
 .list-footer a {
   color: gray;
-  padding: 0px 5px;
+  margin: 0px 5px;
   text-decoration: none;
 }
 
 .list-footer a:hover {
-  border: 0.5px solid hsl(350, 100%, 92%);
-  border-radius: 10%;
-  padding: 0px 5px;
+  border-bottom: 1px solid #3b5998;
 }
 
 #todo-number-display {

@@ -11,22 +11,18 @@ class ListFooter extends React.Component {
       );
     }
 
-    var itemsLeft;
-    if (this.props.activeNumber !== 1) {
-      itemsLeft = (
-        <p id="todo-number-display">{this.props.activeNumber} items left</p>
-      );
-    } else {
-      itemsLeft = (
-        <p id="todo-number-display">{this.props.activeNumber} item left</p>
-      );
-    }
+    var itemsLeft = (
+      <p id="todo-number-display">
+        {this.props.activeNumber} item{this.props.activeNumber > 1 ? "s" : ""}{" "}
+        left
+      </p>
+    );
 
     return (
       <div className="list-footer">
         {itemsLeft}
         <div className="toggleButtons">
-          <a href="#/all" onClick={this.props.handleAll}>
+          <a id="all" href="#/all" onClick={this.props.handleAll}>
             All
           </a>
           <a href="#/active" onClick={this.props.handleActive}>
